@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="third-party/bootstrap.min.css" rel="stylesheet">
+
+  <title>GGFRC Population</title>
+
+  <style>
+    .center {
+      min-width: 700px;
+      gap: 1ch;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="center">
+
+  </div>
+
+  <div class="container text-center">
+    <div class="row">
+      <div class="col-sm-8">
+        <h2>GGFRC Population Filter</h2>
+      </div>
+    </div>
+    <table class="table table-sm">
+
+      <tbody>
+        <tr>
+          <td colspan="4">
+            <input type="tex" class="form-control" id="first_name" placeholder="Fist Name">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4">
+            <input type="tex" class="form-control" id="middle_name" placeholder="Middle Name">
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="4">
+            <input type="tex" class="form-control" id="last_name" placeholder="Last Name">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+
+          </td>
+          <td colspan="1">
+            <button id="search" class="btn btn-primary float-end">Submit</button>
+
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+    <div id="container text-center">
+      <div class="row">
+        <div class="col-sm-8">
+          <h2>Filtered Result:</h2>
+        </div>
+      </div>
+
+      <ol class="list-group list-group-numbered" id="filteredDataContainer">
+       
+
+      </ol>
+
+    </div>
+  </div>
+
+  <script src="./content-script.js"></script>
+</body>
+
+</html>
