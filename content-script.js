@@ -1,6 +1,3 @@
-console.log("here");
-let greeting = "hola, ";
-
 // Function to calculate Levenshtein Distance between two strings
 function levenshteinDistance(str1, str2) {
   const len1 = str1.length;
@@ -53,7 +50,6 @@ function filterPopulation(firstName, middleName, lastName) {
 
     let responseData = result.population;
     if (responseData) {
-      // alert("Lemi")
 
       // Use the retrieved populations as needed
       let filteredData = [];
@@ -63,13 +59,12 @@ function filterPopulation(firstName, middleName, lastName) {
       let familyMembers = result.residency;
       // Example: Display the retrieved populations in the popup
       // document.getElementById('output').innerHTML = JSON.stringify(responseData);
-      // alert("lemi");
 
       for (let i = 0; i < populations.length; i++) {
 
-        const firstNameSimilarity = stringSimilarity(populations[i].firstName, firstName);
-        const middleNameSimilarity = stringSimilarity(populations[i].middleName, middleName);
-        const lastNameSimilarity = stringSimilarity(populations[i].lastName, lastName);
+        const firstNameSimilarity = stringSimilarity(populations[i].firstName, firstName.toUpperCase());
+        const middleNameSimilarity = stringSimilarity(populations[i].middleName, middleName.toUpperCase());
+        const lastNameSimilarity = stringSimilarity(populations[i].lastName, lastName.toUpperCase());
         // If all similarities are greater than or equal to a threshold (e.g., 0.8), consider them similar
         if (firstNameSimilarity >= 0.8 || middleNameSimilarity >= 0.8 || lastNameSimilarity >= 0.8) {
 
@@ -96,6 +91,7 @@ function filterPopulation(firstName, middleName, lastName) {
           infoDiv.innerHTML = `
         <div class="fw-bold">${person.firstName} ${person.lastName} ${person.middleName == 'ABCDE' ? '' : person.middleName} / ${person.gender}</div>
         <p>DOB: ${person.dob}</p>
+        <p>Id: ${person.extId}</p>
     `;
 
           // Create the dropdown div
@@ -117,16 +113,11 @@ function filterPopulation(firstName, middleName, lastName) {
           dropdownMenu += `</ul>`;
           dropdownDiv.innerHTML = dropdownMenu;
 
-          // Create the badge span
-          let badgeSpan = document.createElement('span');
-          badgeSpan.classList.add('badge', 'text-bg-primary', 'rounded-pill', 'p-2', 'm-1');
-          badgeSpan.style.fontSize = '16px';
-          badgeSpan.innerHTML = '&#10003;';
+          
 
           // Append the infoDiv, dropdownDiv, and badgeSpan to the listItem
           listItem.appendChild(infoDiv);
           listItem.appendChild(dropdownDiv);
-          listItem.appendChild(badgeSpan);
 
           // Append the listItem to the container
           container.appendChild(listItem);
@@ -202,3 +193,5 @@ document.addEventListener("click", function (e) {
     }
   }
 });
+
+
