@@ -34,7 +34,7 @@ function groupByLocationExtId(data) {
 
 
 chrome.runtime.onInstalled.addListener(function () {
-  fetch('http://localhost:8000/api/get-population')
+  fetch('https://ggfrc2.ju.edu.et/api/get-population')
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
