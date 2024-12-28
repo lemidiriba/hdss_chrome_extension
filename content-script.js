@@ -40,7 +40,6 @@ function stringSimilarity(str1, str2) {
     levenshteinDistance(str1, str2)) / (str1.length + str2.length);
   return similarity;
 }
-
 function filterPopulation(firstName, middleName, lastName) {
   let container = document.getElementById('filteredDataContainer');
 
@@ -51,78 +50,82 @@ function filterPopulation(firstName, middleName, lastName) {
     let responseData = result.population;
     if (responseData) {
 
-      // Use the retrieved populations as needed
       let filteredData = [];
-
 
       let populations = responseData.population;
       let familyMembers = result.residency;
-      // Example: Display the retrieved populations in the popup
-      // document.getElementById('output').innerHTML = JSON.stringify(responseData);
 
       for (let i = 0; i < populations.length; i++) {
 
         const firstNameSimilarity = stringSimilarity(populations[i].firstName, firstName.toUpperCase());
         const middleNameSimilarity = stringSimilarity(populations[i].middleName, middleName.toUpperCase());
         const lastNameSimilarity = stringSimilarity(populations[i].lastName, lastName.toUpperCase());
-        // If all similarities are greater than or equal to a threshold (e.g., 0.8), consider them similar
+
         if (firstNameSimilarity >= 0.8 || middleNameSimilarity >= 0.8 || lastNameSimilarity >= 0.8) {
           filteredData.push(populations[i]);
         }
-
       }
 
       if (filteredData.length == 0) {
         alert("No populations found")
       } else {
-        // Get the container element where filtered data will be displayed
         let container = document.getElementById('filteredDataContainer');
         filteredData.forEach(function (person) {
-          // Create a list item element
           let listItem = document.createElement('li');
           listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
 
-          // Create the first div to display person's information
           let infoDiv = document.createElement('div');
           infoDiv.classList.add('ms-2', 'me-auto', 'm-1');
 
-          // Populate the infoDiv with the person's name and date of birth
           infoDiv.innerHTML = `
-        <div class="fw-bold">${person.firstName} ${person.lastName} ${person.middleName == 'ABCDE' ? '' : person.middleName} / ${person.gender}</div>
-        <p>DOB: ${person.dob}</p>
-        <p>Id: ${person.extId}</p>
-    `;
+            <div class="fw-bold">${person.firstName} ${person.lastName === 'ABCDE' ? '' : person.lastName} ${person.middleName === 'ABCDE' ? '' : person.middleName} / ${person.gender}</div>
+            <p>DOB: ${person.dob}</p>
+            <p>Id: ${person.extId}</p>
+          `;
 
-          // Create the dropdown div
+          let button = document.createElement('button');
+          button.classList.add('btn', 'btn-primary', 'btn-sm', 'm-1');
+          button.textContent = 'Select';
+
+          button.addEventListener('click', () => {
+            insertExtId(person.extId);
+          });
+
           let dropdownDiv = document.createElement('div');
           dropdownDiv.classList.add('dropdown', 'm-1');
 
-          // Populate the dropdownDiv
           let dropdownMenu = `
-          <a class="btn btn-secondary btn-xs dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Member</a><ul class="dropdown-menu">
-          <li class="list-group-item list-group-item-action active" aria-current="true"><p class="dropdown-item" >Location: ${person.locationExtId}</p></li>
+            <a class="btn btn-secondary btn-xs dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Member</a><ul class="dropdown-menu">
+            <li class="list-group-item list-group-item-action active" aria-current="true"><p class="dropdown-item" >Location: ${person.locationExtId}</p></li>
           `;
 
           familyMembers[person.locationExtId].forEach(function (member) {
+
             dropdownMenu += `
-            <li><p class="list-group-item">${member.firstName}  ${member.lastName} / ${member.gender} </p></li>
-            `;
+                  <li>
+                    <p class="list-group-item">${member.firstName} ${member.lastName} / ${member.gender} / ${member.extId}</p>
+                    <button class="btn btn-primary btn-sm select-btn" data-extid="${member.extId}">Select</button>
+                  </li>`;
+                          });
+
+          // Event delegation for dynamically created buttons
+          document.addEventListener('click', (event) => {
+            if (event.target && event.target.classList.contains('select-btn')) {
+              const extId = event.target.getAttribute('data-extid');
+              insertExtId(extId);
+            }
           });
+
 
           dropdownMenu += `</ul>`;
           dropdownDiv.innerHTML = dropdownMenu;
 
-          
-
-          // Append the infoDiv, dropdownDiv, and badgeSpan to the listItem
           listItem.appendChild(infoDiv);
+          listItem.appendChild(button);
           listItem.appendChild(dropdownDiv);
 
-          // Append the listItem to the container
           container.appendChild(listItem);
         });
-
-
 
       }
 
@@ -130,9 +133,44 @@ function filterPopulation(firstName, middleName, lastName) {
       alert("No data found in local storage, check your internet connection!")
     }
   });
-
-
 }
+
+function insertExtId(extId) {
+  // Get the currently active tab
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs.length === 0) {
+      alert('No active tab found!');
+      return;
+    }
+
+    const activeTab = tabs[0];
+
+    // Inject the content script
+    chrome.scripting.executeScript(
+        {
+          target: { tabId: activeTab.id },
+          func: (id) => {
+            // Access the input field and set its value
+            const inputField = document.getElementById('registrationNumber');
+            if (inputField) {
+              inputField.value = id;
+            } else {
+              alert('Input field for extId not found on this page!');
+            }
+          },
+          args: [extId], // Pass the extId as an argument
+        },
+        (result) => {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError.message);
+          } else {
+            console.log('extId inserted successfully.');
+          }
+        }
+    );
+  });
+}
+
 
 function getValue() {
   let firstNameInput = document.getElementById('first_name');
@@ -148,8 +186,7 @@ function getValue() {
 
 var button = document.getElementById("search");
 button.addEventListener(
-  "click", () => getValue(), false);
-
+    "click", () => getValue(), false);
 
 
 
@@ -210,9 +247,6 @@ document.getElementById("search").addEventListener("click", function () {
 
     if (progress >= 100) {
       clearInterval(interval); // Stop updating when complete
-
-      // Simulate fetching results (replace with your fetch logic)
-      filteredDataContainer.innerHTML = `<li class="list-group-item">Search complete!</li>`;
 
       // Hide progress bar after completion
       setTimeout(() => {
