@@ -67,7 +67,6 @@ function filterPopulation(firstName, middleName, lastName) {
         const lastNameSimilarity = stringSimilarity(populations[i].lastName, lastName.toUpperCase());
         // If all similarities are greater than or equal to a threshold (e.g., 0.8), consider them similar
         if (firstNameSimilarity >= 0.8 || middleNameSimilarity >= 0.8 || lastNameSimilarity >= 0.8) {
-
           filteredData.push(populations[i]);
         }
 
@@ -194,4 +193,31 @@ document.addEventListener("click", function (e) {
   }
 });
 
+document.getElementById("search").addEventListener("click", function () {
+  const progressBarContainer = document.getElementById("progressBarContainer");
+  const progressBar = document.getElementById("progressBar");
+  const filteredDataContainer = document.getElementById("filteredDataContainer");
 
+  // Show the progress bar
+  progressBarContainer.style.display = "block";
+  progressBar.style.width = "0%"; // Reset progress bar
+
+  // Simulate progress over time
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += 10; // Increment progress
+    progressBar.style.width = `${progress}%`; // Update width
+
+    if (progress >= 100) {
+      clearInterval(interval); // Stop updating when complete
+
+      // Simulate fetching results (replace with your fetch logic)
+      filteredDataContainer.innerHTML = `<li class="list-group-item">Search complete!</li>`;
+
+      // Hide progress bar after completion
+      setTimeout(() => {
+        progressBarContainer.style.display = "none";
+      }, 1000);
+    }
+  }, 200); // Update every 200ms
+});

@@ -14,8 +14,7 @@
     "tabs",
     "scripting",
     "storage",
-    "unlimitedStorage",
-    "http://localhost:8000/api/get-population"
+    "unlimitedStorage"
   ],
   "action": {
     "default_title": "GGFRC Population",
